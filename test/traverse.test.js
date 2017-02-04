@@ -177,3 +177,74 @@ test('traverse - general query traversal', function (t) {
   ].forEach(runTest)
   t.end()
 })
+
+test('traverse - when a branch is skipped', function (t) {
+  t.plan(2)
+
+  var query = {
+    query: {
+      bool: {
+        must: [{ term: { foo: 'bar' } }],
+        should: [{ term: { baz: 'qux' } }]
+      }
+    }
+  }
+  var visitor = {
+    pre: function (state) {
+      state.fooTermVisited = false
+      state.bazTermVisited = false
+    },
+    visitor: {
+      must: function (path) {
+        path.skip()
+      },
+      term: function (path, state) {
+        if (path.node.term.foo) {
+          state.fooTermVisited = true
+        }
+        if (path.node.term.baz) {
+          state.bazTermVisited = true
+        }
+      }
+    },
+    post: function (state) {
+      t.equal(state.fooTermVisited, false, 'skips traversing children of skipped node')
+      t.equal(state.bazTermVisited, true, 'continues traversal elsewhere')
+      t.end()
+    }
+  }
+
+  traverse(query, visitor)
+})
+
+test('traverse - when traversal is stopped', function (t) {
+  t.plan(1)
+
+  var query = {
+    query: {
+      bool: {
+        must: [{ term: { foo: 'bar' } }],
+        should: [{ term: { baz: 'qux' } }]
+      }
+    }
+  }
+  var visitor = {
+    pre: function (state) {
+      state.termVisited = false
+    },
+    visitor: {
+      must: function (path) {
+        path.stop()
+      },
+      term: function (path, state) {
+        state.termVisited = true
+      }
+    },
+    post: function (state) {
+      t.ok(!state.termVisited, false, 'skips traversal entirely')
+      t.end()
+    }
+  }
+
+  traverse(query, visitor)
+})

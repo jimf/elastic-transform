@@ -7,8 +7,10 @@ function isFunction (val) {
 function traverse (query, v) {
   var state = {}
   var visitor = v.visitor
+  var stop = false
 
   function traverseNode (node, parent) {
+    if (stop) { return }
     if (Array.isArray(node)) {
       node.forEach(function (child) {
         traverseNode(child, parent)
@@ -28,12 +30,21 @@ function traverse (query, v) {
 
     if (isFunction(onEnter)) {
       onEnter(path, state)
+      if (path._skip) {
+        return
+      }
+      if (path._stop) {
+        stop = true
+        return
+      }
     }
 
     switch (nodeType) {
       case 'bool':
-        ['must', 'should', 'must_not', 'filter']
-        .filter(function (key) { return node.bool[key] })
+        Object.keys(node.bool)
+        .filter(function (key) {
+          return ['must', 'should', 'must_not', 'filter'].indexOf(key) >= 0
+        })
         .forEach(function (key) {
           var subNode = {}
           subNode[key] = node.bool[key]
@@ -69,6 +80,10 @@ function traverse (query, v) {
 
     if (isFunction(onExit)) {
       onExit(path, state)
+      if (path._stop) {
+        stop = true
+        return
+      }
     }
   }
 

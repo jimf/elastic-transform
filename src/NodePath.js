@@ -22,4 +22,18 @@ NodePath.prototype.findParent = function findParent (fn) {
   return parent
 }
 
+/**
+ * Skip traversal of the current branch.
+ */
+NodePath.prototype.skip = function skip () {
+  this._skip = true
+}
+
+/**
+ * Stop traversal entirely.
+ */
+NodePath.prototype.stop = function stop () {
+  this._stop = true
+}
+
 module.exports = NodePath

@@ -35,3 +35,19 @@ test('NodePath#findParent', function (t) {
     'returns null if no parent passes truth test')
   t.end()
 })
+
+test('NodePath#skip', function (t) {
+  var query = { bool: { must: [{ term: { foo: 'bar' } }] } }
+  var subject = new NodePath(query, null)
+  subject.skip()
+  t.equal(subject._skip, true, 'sets internal skip flag')
+  t.end()
+})
+
+test('NodePath#stop', function (t) {
+  var query = { bool: { must: [{ term: { foo: 'bar' } }] } }
+  var subject = new NodePath(query, null)
+  subject.stop()
+  t.equal(subject._stop, true, 'sets internal stop flag')
+  t.end()
+})
