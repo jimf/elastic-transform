@@ -1,4 +1,4 @@
-function NodePath(node, parent) {
+function NodePath (node, parent) {
   this.node = node
   this.parent = parent
 }

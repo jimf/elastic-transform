@@ -1,7 +1,7 @@
 var test = require('tape')
 var subject = require('../src/types')
 
-test('types - getType', function(t) {
+test('types - getType', function (t) {
   t.equal(subject.getType({ bool: {} }), 'bool', 'identifies bool nodes')
   t.equal(subject.getType({ exists: { field: 'foo' } }), 'exists', 'identifies exists nodes')
   t.equal(subject.getType({ geo_distance: {} }), 'geoDistance', 'identifies geo_distance nodes')

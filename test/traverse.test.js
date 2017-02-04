@@ -38,7 +38,7 @@ test('traverse - general visit flow', function (t) {
         }
       }
     },
-    post: function() {
+    post: function () {
       results.push('post')
     }
   }
