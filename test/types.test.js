@@ -1,10 +1,13 @@
 var test = require('tape')
 var subject = require('../src/types')
 
-test('types - getType', function(t) {
+test('types - getType', function (t) {
   t.equal(subject.getType({ bool: {} }), 'bool', 'identifies bool nodes')
   t.equal(subject.getType({ exists: { field: 'foo' } }), 'exists', 'identifies exists nodes')
+  t.equal(subject.getType({ filter: {} }), 'filter', 'identifies filter nodes')
   t.equal(subject.getType({ geo_distance: {} }), 'geoDistance', 'identifies geo_distance nodes')
+  t.equal(subject.getType({ match: {} }), 'match', 'identifies match nodes')
+  t.equal(subject.getType({ match_all: {} }), 'matchAll', 'identifies match_all nodes')
   t.equal(subject.getType({ must: [] }), 'must', 'identifies must nodes')
   t.equal(subject.getType({ must_not: [] }), 'mustNot', 'identifies must_not nodes')
   t.equal(subject.getType({ nested: {} }), 'nested', 'identifies nested nodes')
@@ -31,7 +34,10 @@ function testIdentifier (funcName, key) {
 
 testIdentifier('isBool', 'bool')
 testIdentifier('isExists', 'exists')
+testIdentifier('isFilter', 'filter')
 testIdentifier('isGeoDistance', 'geo_distance')
+testIdentifier('isMatch', 'match')
+testIdentifier('isMatchAll', 'match_all')
 testIdentifier('isMust', 'must')
 testIdentifier('isMustNot', 'must_not')
 testIdentifier('isNested', 'nested')

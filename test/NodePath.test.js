@@ -9,6 +9,7 @@ test('NodePath - instance', function (t) {
 
   t.ok(subject1.node === query, 'retains a reference to given node')
   t.ok(subject1.parent === null, 'retains a reference to given parent')
+  t.equal(subject1.type, 'bool', 'has type')
   t.equal(subject3.parent.parent.node, query,
     'supports recursive parent backtracking')
 
