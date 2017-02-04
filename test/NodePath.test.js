@@ -15,3 +15,23 @@ test('NodePath - instance', function (t) {
 
   t.end()
 })
+
+test('NodePath#findParent', function (t) {
+  var query = { bool: { must: [{ term: { foo: 'bar' } }] } }
+  var path1 = new NodePath(query, null)
+  var path2 = new NodePath(query.bool, path1)
+  var subject = new NodePath({ must: query.bool.must }, path2)
+
+  function findBool (node) {
+    return node.type === 'bool'
+  }
+  function findNothing () {
+    return false
+  }
+
+  t.equal(subject.findParent(findBool).type, 'bool',
+    'finds the first parent to pass a truth test')
+  t.equal(subject.findParent(findNothing), null,
+    'returns null if no parent passes truth test')
+  t.end()
+})
