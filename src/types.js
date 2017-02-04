@@ -7,7 +7,10 @@ function isObjWithKey (key) {
 var typeMap = {
   bool: 'bool',
   exists: 'exists',
+  filter: 'filter',
   geo_distance: 'geoDistance',
+  match: 'match',
+  match_all: 'matchAll',
   must: 'must',
   must_not: 'mustNot',
   nested: 'nested',
@@ -20,7 +23,10 @@ var typeMap = {
 
 exports.isBool = isObjWithKey('bool')
 exports.isExists = isObjWithKey('exists')
+exports.isFilter = isObjWithKey('filter')
 exports.isGeoDistance = isObjWithKey('geo_distance')
+exports.isMatch = isObjWithKey('match')
+exports.isMatchAll = isObjWithKey('match_all')
 exports.isMust = isObjWithKey('must')
 exports.isMustNot = isObjWithKey('must_not')
 exports.isNested = isObjWithKey('nested')

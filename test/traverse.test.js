@@ -84,3 +84,96 @@ test('traverse - basic visitor', function (t) {
   ], 'executes visitor callbacks in expected order')
   t.end()
 })
+
+test('traverse - general query traversal', function (t) {
+  function runTest (testcase) {
+    var visits = []
+    var visitor = {
+      visitor: {
+        bool: function () { visits.push('bool') },
+        exists: function () { visits.push('exists') },
+        filter: function () { visits.push('filter') },
+        geoDistance: function () { visits.push('geoDistance') },
+        match: function () { visits.push('match') },
+        matchAll: function () { visits.push('matchAll') },
+        must: function () { visits.push('must') },
+        mustNot: function () { visits.push('mustNot') },
+        nested: function () { visits.push('nested') },
+        query: function () { visits.push('query') },
+        range: function () { visits.push('range') },
+        regexp: function () { visits.push('regexp') },
+        should: function () { visits.push('should') },
+        term: function () { visits.push('term') }
+      }
+    }
+    traverse(testcase.input, visitor)
+    t.deepEqual(visits, testcase.expected)
+  }
+
+  [
+    {
+      input: {
+        query: {
+          bool: {
+            should: [
+              { exists: { field: 'foo' } },
+              {
+                range: {
+                  date: {
+                    gte: 'now-1d/d'
+                  }
+                }
+              },
+              { regexp: { foo: '.*"bar".*' } }
+            ]
+          }
+        }
+      },
+      expected: ['query', 'bool', 'should', 'exists', 'range', 'regexp']
+    },
+
+    {
+      input: {
+        query: {
+          bool: {
+            must_not: [
+              {
+                nested: {
+                  path: 'foo',
+                  query: {
+                    bool: {
+                      must: [
+                        { match: { foo: 'bar' } }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      expected: ['query', 'bool', 'mustNot', 'nested', 'query', 'bool', 'must', 'match']
+    },
+
+    {
+      input: {
+        query: {
+          bool: {
+            must: {
+              match_all: {}
+            },
+            filter: {
+              geo_distance: {
+                distance: '12km',
+                'pin.location': [-70, 40]
+              }
+            }
+          }
+        }
+      },
+      expected: ['query', 'bool', 'must', 'matchAll', 'filter', 'geoDistance']
+    }
+  ].forEach(runTest)
+  t.end()
+})

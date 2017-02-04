@@ -1,5 +1,4 @@
 var NodePath = require('./NodePath')
-var t = require('./types')
 
 function isFunction (val) {
   return toString.call(val) === '[object Function]'
@@ -18,7 +17,7 @@ function traverse (query, v) {
     }
 
     var path = new NodePath(node, parent)
-    var nodeType = t.getType(node)
+    var nodeType = path.type
     var onEnter
     var onExit
 
@@ -28,12 +27,13 @@ function traverse (query, v) {
     }
 
     if (isFunction(onEnter)) {
-      onEnter.call(null, path, state)
+      onEnter(path, state)
     }
 
     switch (nodeType) {
       case 'bool':
-        ['must']
+        ['must', 'should', 'must_not', 'filter']
+        .filter(function (key) { return node.bool[key] })
         .forEach(function (key) {
           var subNode = {}
           subNode[key] = node.bool[key]
@@ -41,10 +41,24 @@ function traverse (query, v) {
         })
         break
 
+      case 'filter':
       case 'must':
-        traverseNode(node.must, path)
+      case 'nested':
+      case 'query':
+      case 'should':
+        traverseNode(node[nodeType], path)
         break
 
+      case 'mustNot':
+        traverseNode(node.must_not, path)
+        break
+
+      case 'exists':
+      case 'geoDistance':
+      case 'match':
+      case 'matchAll':
+      case 'range':
+      case 'regexp':
       case 'term':
         // No children. Nothing to do.
         break
@@ -54,7 +68,7 @@ function traverse (query, v) {
     }
 
     if (isFunction(onExit)) {
-      onExit.call(null, path, state)
+      onExit(path, state)
     }
   }
 
