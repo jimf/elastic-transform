@@ -218,7 +218,7 @@ test('traverse - when a branch is skipped', function (t) {
 })
 
 test('traverse - when traversal is stopped', function (t) {
-  t.plan(1)
+  t.plan(2)
 
   var query = {
     query: {
@@ -228,7 +228,7 @@ test('traverse - when traversal is stopped', function (t) {
       }
     }
   }
-  var visitor = {
+  var visitor1 = {
     pre: function (state) {
       state.termVisited = false
     },
@@ -241,10 +241,36 @@ test('traverse - when traversal is stopped', function (t) {
       }
     },
     post: function (state) {
-      t.ok(!state.termVisited, false, 'skips traversal entirely')
-      t.end()
+      t.ok(!state.termVisited, false, 'stops traversal entirely')
+    }
+  }
+  var visitor2 = {
+    pre: function (state) {
+      state.termVisited = false
+    },
+    visitor: {
+      must: {
+        exit: function (path) {
+          path.stop()
+        }
+      },
+      term: function (path, state) {
+        state.termVisited = true
+      }
+    },
+    post: function (state) {
+      t.ok(!state.termVisited, false, 'supports stop within exit routine')
     }
   }
 
-  traverse(query, visitor)
+  traverse(query, visitor1)
+  traverse(query, visitor2)
+
+  t.end()
+})
+
+test('traverse - unsupported/unknown node type', function (t) {
+  var query = { unimplemented: true }
+  t.throws(traverse.bind())
+  t.end()
 })

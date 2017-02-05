@@ -16,8 +16,8 @@ test('types - getType', function (t) {
   t.equal(subject.getType({ regexp: {} }), 'regexp', 'identifies regexp nodes')
   t.equal(subject.getType({ should: [] }), 'should', 'identifies should nodes')
   t.equal(subject.getType({ term: { foo: 'bar' } }), 'term', 'identifies term nodes')
-  t.throws(subject.getType.bind(null), 'throws given no input')
-  t.throws(subject.getType.bind(null, {}), 'throws given unknown input')
+  t.throws(subject.getType, 'throws given no input')
+  t.throws(subject.getType.bind({}), 'throws given unknown input')
   t.end()
 })
 

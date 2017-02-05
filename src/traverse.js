@@ -75,6 +75,7 @@ function traverse (query, v) {
         break
 
       default:
+        /* istanbul ignore next */
         throw new Error('Unhandled ElasticSearch traversal')
     }
 

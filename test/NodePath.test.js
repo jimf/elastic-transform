@@ -46,6 +46,8 @@ test('NodePath#insertAfter', function (t) {
       }
     }
   }
+
+  var queryPath = new NodePath(query, null)
   var mustPath = new NodePath({ must: query.query.bool.must }, null)
   var mustTermPath = new NodePath(query.query.bool.must[0], mustPath)
   var shouldPath = new NodePath({ should: query.query.bool.should }, null)
@@ -84,6 +86,8 @@ test('NodePath#insertBefore', function (t) {
       }
     }
   }
+
+  var queryPath = new NodePath(query, null)
   var mustPath = new NodePath({ must: query.query.bool.must }, null)
   var mustTermPath = new NodePath(query.query.bool.must[0], mustPath)
   var shouldPath = new NodePath({ should: query.query.bool.should }, null)

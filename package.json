@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "standard",
-    "test": "tape test/*.test.js",
+    "test": "nyc tape test/*.test.js",
     "tdd": "nodemon -q -x 'npm test'"
   },
   "keywords": [
@@ -16,6 +16,7 @@
   "license": "MIT",
   "devDependencies": {
     "nodemon": "^1.11.0",
+    "nyc": "^10.1.2",
     "standard": "^8.6.0",
     "tape": "^4.6.3"
   }
