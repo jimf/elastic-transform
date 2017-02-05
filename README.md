@@ -22,6 +22,8 @@ For example, traversing the following visitor would add a `must` clause with an
 account term applied:
 
 ```js
+var traverse = require('elastic-traverse')
+
 var visitor = {
   visitor: {
     bool: function (path) {
@@ -34,6 +36,25 @@ var visitor = {
     }
   }
 }
+
+var elasticQuery = {
+  query: {
+    bool: {
+      should: [{ term: { user: 'kimchy' } }]
+    }
+  }
+}
+
+traverse(elasticQuery, visitor)
+console.log(elasticQuery)
+//=> {
+//=>   query: {
+//=>     bool: {
+//=>       should: [{ term: { user: 'kimchy' } }],
+//=>       must: [{ term: account: 42 }]
+//=>     }
+//=>   }
+//=> }
 ```
 
 ### Visitor Interface
