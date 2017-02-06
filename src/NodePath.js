@@ -36,6 +36,18 @@ Object.keys(t).forEach(function (key) {
 })
 
 /**
+ * Recursively search parent nodes, returning the first that is a "logic" node
+ * (must, should, or mustNot), or null if no logic node ancestors are found.
+ *
+ * @return {NodePath|null}
+ */
+NodePath.prototype.findLogicParent = function findLogicParent () {
+  return this.findParent(function (path) {
+    return path.isMust() || path.isShould() || path.isMustNot()
+  })
+}
+
+/**
  * Recursively apply a predicate function to parent nodes, returning the first
  * node that causes the predicate to return true. If no parent nodes are found,
  * return null.

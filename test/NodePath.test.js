@@ -16,6 +16,40 @@ test('NodePath - instance', function (t) {
   t.end()
 })
 
+test('NodePath#findLogicParent', function (t) {
+  var q = {
+    query: {
+      bool: {
+        must: [
+          { term: { 'foo.bar': 'value' } }
+        ],
+        should: [
+          { term: { 'baz': 'value' } }
+        ],
+        must_not: [
+          { term: { 'qux': 'value' } }
+        ]
+      }
+    }
+  }
+
+  const queryPath = new NodePath(q, null)
+  const boolPath = new NodePath(q.query, queryPath)
+  const mustPath = new NodePath({ must: q.query.bool.must }, boolPath)
+  const shouldPath = new NodePath({ should: q.query.bool.should }, boolPath)
+  const mustNotPath = new NodePath({ must_not: q.query.bool.must_not }, boolPath)
+  const mustTermPath = new NodePath(q.query.bool.must[0], mustPath)
+  const shouldTermPath = new NodePath(q.query.bool.should[0], shouldPath)
+  const mustNotTermPath = new NodePath(q.query.bool.must_not[0], mustNotPath)
+
+  t.equal(mustTermPath.findLogicParent().type, 'must', 'returns first parent must for must descendants')
+  t.equal(shouldTermPath.findLogicParent().type, 'should', 'returns first parent should for should descendants')
+  t.equal(mustNotTermPath.findLogicParent().type, 'mustNot', 'returns first parent must_not for must_not descendants')
+  t.equal(boolPath.findLogicParent(), null, 'returns null when no logic parent is found')
+
+  t.end()
+})
+
 test('NodePath#findParent', function (t) {
   var query = { bool: { must: [{ term: { foo: 'bar' } }] } }
   var path1 = new NodePath(query, null)
@@ -33,6 +67,34 @@ test('NodePath#findParent', function (t) {
     'finds the first parent to pass a truth test')
   t.equal(subject.findParent(findNothing), null,
     'returns null if no parent passes truth test')
+  t.end()
+})
+
+test('NodePath#get', function (t) {
+  var q = {
+    query: {
+      bool: {
+        must: [
+          { term: { 'foo.bar': 'value' } }
+        ],
+        should: [
+          { term: { 'baz': 'value' } }
+        ],
+        must_not: [
+          { term: { 'qux': 'value' } }
+        ]
+      }
+    }
+  }
+
+  const queryPath = new NodePath(q, null)
+
+  t.equal(queryPath.get('bool'), q.query.bool, 'returns nested reference to nested query object')
+  t.equal(queryPath.get('bool.doesNotExist'), undefined, 'returns undefined when path is not found')
+  t.equal(queryPath.get('bool.must.0'), q.query.bool.must[0], 'supports returning array elements')
+  t.equal(queryPath.get(['bool', 'must', '0', 'term', 'foo.bar']), q.query.bool.must[0].term['foo.bar'],
+    'supports specifying object path as an array of keys')
+
   t.end()
 })
 
@@ -83,34 +145,6 @@ test('NodePath#getField', function (t) {
   var pathWithoutField = new NodePath({ query: {} }, null)
   t.equal(pathWithoutField.getField(), null,
     'returns null for nodes that do not have a logical field')
-
-  t.end()
-})
-
-test('NodePath#get', function (t) {
-  var q = {
-    query: {
-      bool: {
-        must: [
-          { term: { 'foo.bar': 'value' } }
-        ],
-        should: [
-          { term: { 'baz': 'value' } }
-        ],
-        must_not: [
-          { term: { 'qux': 'value' } }
-        ]
-      }
-    }
-  }
-
-  const queryPath = new NodePath(q, null)
-
-  t.equal(queryPath.get('bool'), q.query.bool, 'returns nested reference to nested query object')
-  t.equal(queryPath.get('bool.doesNotExist'), undefined, 'returns undefined when path is not found')
-  t.equal(queryPath.get('bool.must.0'), q.query.bool.must[0], 'supports returning array elements')
-  t.equal(queryPath.get(['bool', 'must', '0', 'term', 'foo.bar']), q.query.bool.must[0].term['foo.bar'],
-    'supports specifying object path as an array of keys')
 
   t.end()
 })
