@@ -241,12 +241,12 @@ test('traverse - when traversal is stopped', function (t) {
       }
     },
     post: function (state) {
-      t.ok(!state.termVisited, false, 'stops traversal entirely')
+      t.ok(!state.termVisited, 'stops traversal entirely')
     }
   }
   var visitor2 = {
     pre: function (state) {
-      state.termVisited = false
+      state.shouldVisited = false
     },
     visitor: {
       must: {
@@ -254,23 +254,17 @@ test('traverse - when traversal is stopped', function (t) {
           path.stop()
         }
       },
-      term: function (path, state) {
-        state.termVisited = true
+      should: function (path, state) {
+        state.shouldVisited = true
       }
     },
     post: function (state) {
-      t.ok(!state.termVisited, false, 'supports stop within exit routine')
+      t.ok(!state.shouldVisited, 'supports stop within exit routine')
     }
   }
 
   traverse(query, visitor1)
   traverse(query, visitor2)
 
-  t.end()
-})
-
-test('traverse - unsupported/unknown node type', function (t) {
-  var query = { unimplemented: true }
-  t.throws(traverse.bind())
   t.end()
 })

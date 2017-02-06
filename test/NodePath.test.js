@@ -53,6 +53,24 @@ test('NodePath#getField', function (t) {
     {
       input: { regexp: { foo: '.*value.*' } },
       expected: 'foo'
+    },
+    {
+      input: { exists: { field: 'foo' } },
+      expected: 'foo'
+    },
+    {
+      input: {
+        geo_distance: {
+          distance: '12km',
+          distance_type: 'sloppy_arc',
+          optimize_bbox: 'memory',
+          _name: 'foo',
+          ignore_malformed: false,
+          validation_method: 'STRICT',
+          foo: [-70, 40]
+        }
+      },
+      expected: 'foo'
     }
   ]
 
@@ -81,6 +99,7 @@ test('NodePath#insertAfter', function (t) {
   }
 
   var queryPath = new NodePath(query, null)
+  var boolPath = new NodePath(query.query, queryPath)
   var mustPath = new NodePath({ must: query.query.bool.must }, null)
   var mustTermPath = new NodePath(query.query.bool.must[0], mustPath)
   var shouldPath = new NodePath({ should: query.query.bool.should }, null)
@@ -121,6 +140,7 @@ test('NodePath#insertBefore', function (t) {
   }
 
   var queryPath = new NodePath(query, null)
+  var boolPath = new NodePath(query.query, queryPath)
   var mustPath = new NodePath({ must: query.query.bool.must }, null)
   var mustTermPath = new NodePath(query.query.bool.must[0], mustPath)
   var shouldPath = new NodePath({ should: query.query.bool.should }, null)
@@ -155,7 +175,7 @@ test('NodePath#remove', function (t) {
       bool: {
         must: [{ term: { foo: 'foo' } }],
         should: [{ term: { bar: 'bar' } }],
-        must_not: [{ term: { baz: 'baz' } }],
+        must_not: [{ term: { baz: 'baz' } }]
       }
     }
   }
@@ -196,7 +216,7 @@ test('NodePath#replaceWith', function (t) {
       bool: {
         must: [{ term: { foo: 'foo' } }],
         should: [{ term: { bar: 'bar' } }],
-        must_not: [{ term: { baz: 'baz' } }],
+        must_not: [{ term: { baz: 'baz' } }]
       }
     }
   }
@@ -239,7 +259,7 @@ test('NodePath#replaceWithMany', function (t) {
       bool: {
         must: [{ term: { foo: 'foo' } }],
         should: [{ term: { bar: 'bar' } }],
-        must_not: [{ term: { baz: 'baz' } }],
+        must_not: [{ term: { baz: 'baz' } }]
       }
     }
   }

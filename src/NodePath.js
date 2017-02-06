@@ -6,6 +6,15 @@ var manipMap = {
   mustNot: 'must_not'
 }
 
+var geoDistanceOpts = [
+  'distance',
+  'distance_type',
+  'optimize_bbox',
+  '_name',
+  'ignore_malformed',
+  'validation_method'
+]
+
 function NodePath (node, parent) {
   this.node = node
   this.parent = parent
@@ -34,8 +43,14 @@ NodePath.prototype.findParent = function findParent (fn) {
  * @return {string}
  */
 NodePath.prototype.getField = function getField () {
-  if (['match', 'range', 'regexp', 'term'].indexOf(this.type) >= 0) {
+  if (this.type === 'exists') {
+    return this.node.exists.field
+  } else if (['match', 'range', 'regexp', 'term'].indexOf(this.type) >= 0) {
     return Object.keys(this.node[this.type])[0]
+  } else if (this.type === 'geoDistance') {
+    return Object.keys(this.node.geo_distance).filter(function (key) {
+      return geoDistanceOpts.indexOf(key) === -1
+    })[0]
   }
   return null
 }
