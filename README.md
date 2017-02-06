@@ -1,6 +1,6 @@
 # ElasticSearch Transform
 
-ElasticSearch query transformation using the [visitor pattern][]
+ElasticSearch query transformation using the [visitor pattern][].
 
 _Work in progress_
 
@@ -14,12 +14,14 @@ Install using npm:
 
 __elastic-transform__ exports a `traverse` function which expects an
 ElasticSearch query and a visitor object. It will then visit each node in the
-query, invoking methods on the visitor as it does so.
+query, invoking methods on the visitor as it does so, corresponding with the
+type of the node being visited. Depending on the visitor, the query may be
+modified in place.
 
 ### Example
 
-For example, traversing the following visitor would add a `must` clause with an
-account term applied:
+Traversing an ElasticSearch query with the following visitor would add a `must`
+clause specifying an account value:
 
 ```js
 var traverse = require('elastic-traverse')
@@ -27,11 +29,16 @@ var traverse = require('elastic-traverse')
 var visitor = {
   visitor: {
     bool: function (path) {
+      // Ensure a must node exists and is an array.
       path.node.bool.must = path.node.bool.must || []
       if (!Array.isArray(path.node.bool.must)) {
         path.node.bool.must = [path.node.bool.must]
       }
+
+      // Prepend an account term to the must.
       path.node.bool.must.unshift({ term: { account: accountId } })
+
+      // Stop traversal. Only apply transform to the first bool traversed.
       path.stop()
     }
   }
@@ -56,6 +63,8 @@ console.log(elasticQuery)
 //=>   }
 //=> }
 ```
+
+See the [examples](examples/) directory for this and more examples.
 
 ### Visitor Interface
 
@@ -107,6 +116,28 @@ Visit methods are passed 2 arguments: `path` and `state`. Paths are wrappers
 around the original nodes and provide a number of additional state attributes
 and methods (see below for a full listing), in addition to the raw `node`
 itself.
+
+#### Path Properties
+
+##### `path.node`
+
+Raw node reference in the query. Modifying this object will in turn modify the
+query.
+
+##### `path.parent`
+
+Parent path. Recursive reference to parent node(s) up the tree. `path.parent`
+will be `null` for the root node of the query.
+
+##### `path.type`
+
+Type of the node. Types generally correspond directly with their ElasticSearch
+counterparts, though they will be in camelcase (e.g., `geoDistance`) rather
+than snake case.
+
+#### Path Methods
+
+WIP
 
 ## License
 
