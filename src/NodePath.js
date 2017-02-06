@@ -15,6 +15,12 @@ var geoDistanceOpts = [
   'validation_method'
 ]
 
+function snakecase (str) {
+  return str.replace(/([A-Z])/g, function ($1) {
+    return '_' + $1.toLowerCase()
+  })
+}
+
 function NodePath (node, parent) {
   this.node = node
   this.parent = parent
@@ -53,6 +59,25 @@ NodePath.prototype.getField = function getField () {
     })[0]
   }
   return null
+}
+
+/**
+ * Returns the node value.
+ *
+ * @return {*}
+ */
+NodePath.prototype.getValue = function getValue () {
+  switch (this.type) {
+    case 'geoDistance':
+    case 'match':
+    case 'range':
+    case 'regexp':
+    case 'term':
+      return this.node[snakecase(this.type)][this.getField()]
+
+    default:
+      return null
+  }
 }
 
 /**

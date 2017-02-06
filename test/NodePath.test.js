@@ -87,6 +87,57 @@ test('NodePath#getField', function (t) {
   t.end()
 })
 
+test('NodePath#getValue', function (t) {
+  var validCases = [
+    {
+      input: { match: { foo: 'value' } },
+      expected: 'value'
+    },
+    {
+      input: { term: { foo: 'value' } },
+      expected: 'value'
+    },
+    {
+      input: { range: { foo: { gte: 10 } } },
+      expected: { gte: 10 }
+    },
+    {
+      input: { regexp: { foo: '.*value.*' } },
+      expected: '.*value.*'
+    },
+    {
+      input: { exists: { field: 'foo' } },
+      expected: null
+    },
+    {
+      input: {
+        geo_distance: {
+          distance: '12km',
+          distance_type: 'sloppy_arc',
+          optimize_bbox: 'memory',
+          _name: 'foo',
+          ignore_malformed: false,
+          validation_method: 'STRICT',
+          foo: [-70, 40]
+        }
+      },
+      expected: [-70, 40]
+    }
+  ]
+
+  validCases.forEach(function (testcase) {
+    var subject = new NodePath(testcase.input, null)
+    t.deepEqual(subject.getValue(), testcase.expected,
+      'returns value from expected leaf nodes')
+  })
+
+  var pathWithoutField = new NodePath({ query: {} }, null)
+  t.equal(pathWithoutField.getValue(), null,
+    'returns null for nodes that do not have a logical value')
+
+  t.end()
+})
+
 test('NodePath#insertAfter', function (t) {
   var query = {
     query: {
