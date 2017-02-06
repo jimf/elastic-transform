@@ -29,6 +29,18 @@ NodePath.prototype.findParent = function findParent (fn) {
 }
 
 /**
+ * Returns the node field value.
+ *
+ * @return {string}
+ */
+NodePath.prototype.getField = function getField () {
+  if (['match', 'range', 'regexp', 'term'].indexOf(this.type) >= 0) {
+    return Object.keys(this.node[this.type])[0]
+  }
+  return null
+}
+
+/**
  * Insert given node after context node.
  *
  * @param {object} node Node to insert

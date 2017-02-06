@@ -36,6 +36,39 @@ test('NodePath#findParent', function (t) {
   t.end()
 })
 
+test('NodePath#getField', function (t) {
+  var validCases = [
+    {
+      input: { match: { foo: 'value' } },
+      expected: 'foo'
+    },
+    {
+      input: { term: { foo: 'value' } },
+      expected: 'foo'
+    },
+    {
+      input: { range: { foo: { gte: 10 } } },
+      expected: 'foo'
+    },
+    {
+      input: { regexp: { foo: '.*value.*' } },
+      expected: 'foo'
+    }
+  ]
+
+  validCases.forEach(function (testcase) {
+    var subject = new NodePath(testcase.input, null)
+    t.equal(subject.getField(), testcase.expected,
+      'returns field value from expected leaf nodes')
+  })
+
+  var pathWithoutField = new NodePath({ query: {} }, null)
+  t.equal(pathWithoutField.getField(), null,
+    'returns null for nodes that do not have a logical field')
+
+  t.end()
+})
+
 test('NodePath#insertAfter', function (t) {
   var query = {
     query: {
