@@ -248,6 +248,40 @@ test('NodePath#insertBefore', function (t) {
   t.end()
 })
 
+test('NodePath#isX', function (t) {
+  t.ok((new NodePath({ bool: {} })).isBool(), 'returns true for bool nodes')
+  t.ok((new NodePath({ exists: { field: 'foo' } })).isExists(), 'returns true for exists nodes')
+  t.ok((new NodePath({ filter: {} })).isFilter(), 'identifies filter nodes')
+  t.ok((new NodePath({ geo_distance: {} })).isGeoDistance(), 'returns true for geo_distance nodes')
+  t.ok((new NodePath({ match: {} })).isMatch(), 'returns true for match nodes')
+  t.ok((new NodePath({ match_all: {} })).isMatchAll(), 'returns true for match_all nodes')
+  t.ok((new NodePath({ must: [] })).isMust(), 'returns true for must nodes')
+  t.ok((new NodePath({ must_not: [] })).isMustNot(), 'returns true for must_not nodes')
+  t.ok((new NodePath({ nested: {} })).isNested(), 'returns true for nested nodes')
+  t.ok((new NodePath({ query: {} })).isQuery(), 'returns true for query nodes')
+  t.ok((new NodePath({ range: {} })).isRange(), 'returns true for range nodes')
+  t.ok((new NodePath({ regexp: {} })).isRegexp(), 'returns true for regexp nodes')
+  t.ok((new NodePath({ should: [] })).isShould(), 'returns true for should nodes')
+  t.ok((new NodePath({ term: { foo: 'bar' } })).isTerm(), 'returns true for term nodes')
+
+  t.notOk((new NodePath({ query: {} })).isBool(), 'returns false for non-bool nodes')
+  t.notOk((new NodePath({ query: {} })).isExists(), 'returns false for non-exists nodes')
+  t.notOk((new NodePath({ query: {} })).isFilter(), 'identifies non-filter nodes')
+  t.notOk((new NodePath({ query: {} })).isGeoDistance(), 'returns false for non-geo_distance nodes')
+  t.notOk((new NodePath({ query: {} })).isMatch(), 'returns false for non-match nodes')
+  t.notOk((new NodePath({ query: {} })).isMatchAll(), 'returns false for non-match_all nodes')
+  t.notOk((new NodePath({ query: [] })).isMust(), 'returns false for non-must nodes')
+  t.notOk((new NodePath({ query: [] })).isMustNot(), 'returns false for non-must_not nodes')
+  t.notOk((new NodePath({ query: {} })).isNested(), 'returns false for non-nested nodes')
+  t.notOk((new NodePath({ bool: {} })).isQuery(), 'returns false for non-query nodes')
+  t.notOk((new NodePath({ query: {} })).isRange(), 'returns false for non-range nodes')
+  t.notOk((new NodePath({ query: {} })).isRegexp(), 'returns false for non-regexp nodes')
+  t.notOk((new NodePath({ query: {} })).isShould(), 'returns false for non-should nodes')
+  t.notOk((new NodePath({ query: {} })).isTerm(), 'returns false for non-term nodes')
+
+  t.end()
+})
+
 test('NodePath#remove', function (t) {
   var query = {
     query: {

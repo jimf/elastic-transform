@@ -27,6 +27,14 @@ function NodePath (node, parent) {
   this.type = t.getType(node)
 }
 
+Object.keys(t).forEach(function (key) {
+  if (key.indexOf('is') === 0) {
+    NodePath.prototype[key] = function () {
+      return t[key](this.node)
+    }
+  }
+})
+
 /**
  * Recursively apply a predicate function to parent nodes, returning the first
  * node that causes the predicate to return true. If no parent nodes are found,
