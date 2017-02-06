@@ -107,7 +107,7 @@ test('NodePath#get', function (t) {
   const queryPath = new NodePath(q, null)
 
   t.equal(queryPath.get('bool'), q.query.bool, 'returns nested reference to nested query object')
-  t.equal(queryPath.get('bool.doesNotExist'), null, 'returns null when path is not found')
+  t.equal(queryPath.get('bool.doesNotExist'), undefined, 'returns undefined when path is not found')
   t.equal(queryPath.get('bool.must.0'), q.query.bool.must[0], 'supports returning array elements')
   t.equal(queryPath.get(['bool', 'must', '0', 'term', 'foo.bar']), q.query.bool.must[0].term['foo.bar'],
     'supports specifying object path as an array of keys')
