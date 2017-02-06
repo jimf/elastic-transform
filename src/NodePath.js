@@ -44,6 +44,20 @@ NodePath.prototype.findParent = function findParent (fn) {
 }
 
 /**
+ * Return a deeply nested reference within node, or null if not found.
+ *
+ * @param {string|string[]} objectPath Path within node to return
+ * @return {*}
+ */
+NodePath.prototype.get = function get (objectPath) {
+  var keys = Array.isArray(objectPath) ? objectPath : objectPath.split('.')
+  var result = keys.reduce(function (acc, key) {
+    return acc && acc[key]
+  }, this.node[snakecase(this.type)])
+  return result == null ? null : result
+}
+
+/**
  * Returns the node field value.
  *
  * @return {string}
