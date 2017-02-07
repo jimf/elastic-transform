@@ -12,7 +12,7 @@ function traverse (query, v) {
   function traverseNode (node, parent) {
     if (stop) { return }
     if (Array.isArray(node)) {
-      node.forEach(function (child) {
+      node.slice(0).forEach(function (child) {
         traverseNode(child, parent)
       })
       return
