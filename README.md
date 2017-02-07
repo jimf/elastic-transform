@@ -1,6 +1,6 @@
 # ElasticSearch Transform
 
-ElasticSearch query transformation using the [visitor pattern][].
+ElasticSearch query transformations using the [visitor pattern][].
 
 _Work in progress_
 
@@ -114,8 +114,7 @@ form can be used for advanced enter/exit processing.
 
 Visit methods are passed 2 arguments: `path` and `state`. Paths are wrappers
 around the original nodes and provide a number of additional state attributes
-and methods (see below for a full listing), in addition to the raw `node`
-itself.
+and methods, in addition to the raw `node` itself.
 
 #### Path Properties
 
@@ -137,7 +136,137 @@ than snake case.
 
 #### Path Methods
 
-WIP
+##### `path.findLogicParent()`
+
+Walk up the query tree, returning the first "logic" node found (`must`,
+`should`, or `mustNot`), or `undefined`.
+
+##### `path.findParent(callback)`
+
+Walk up the query tree, calling the callback function with the current node
+path. Return the first node where the callback returns `true`, or otherwise,
+return `undefined`.
+
+##### `path.get(objectPath)`
+
+Helper method around manually looking up deeply nested keys on `path.node`.
+`path.get` can be called with a dot-delimited string (e.g., "bool.must.0"),
+that in addition to being more terse, is also null-safe (i.e., if a sub-path
+is `undefined`, the method will return `undefined` rather than throw).
+
+`path.get` may also be called with an array of keys if any keys contain a dot.
+
+##### `path.getField()`
+
+Return the "field" value of a leaf node. For example, if `path.node` pointed to
+a `term` node of `{ term: { user: "kimchy" } }`, `path.getField()` would return
+`"user"`.
+
+##### `path.getPath(objectPath)`
+
+Identical in functionality to `path.get`, except that the return value will be
+wrapped as a node path. Note that this means this method will throw if the
+resolved path is not a traversable node.
+
+##### `path.getSibling(siblingKey)`
+
+Return a sibling node with the given `siblingKey`, i.e., an object key or array
+index.
+
+##### `path.getValue()`
+
+Return the "value" of a leaf node. For example, if `path.node` pointed to a
+`term` node of `{ term: { user: "kimchy" } }`, `path.getValue()` would return
+`"kimchy"`.
+
+##### `path.insertAfter(node)`
+
+Insert the given node immediately after the current node. This method should
+only be called on nodes whose parents are `must`/`should`/`mustNot` arrays.
+
+##### `path.insertBefore(node)`
+
+Insert the given node immediately before the current node. This method should
+only be called on nodes whose parents are `must`/`should`/`mustNot` arrays.
+
+##### `path.isBool()`
+
+Is the current node a `bool` node?
+
+##### `path.isExists()`
+
+Is the current node an `exists` node?
+
+##### `path.isFilter()`
+
+Is the current node a `filter` node?
+
+##### `path.isGeoDistance()`
+
+Is the current node a `geoDistance` node?
+
+##### `path.isMatch()`
+
+Is the current node a `match` node?
+
+##### `path.isMatchAll()`
+
+Is the current node a `matchAll` node?
+
+##### `path.isMust()`
+
+Is the current node a `must` node?
+
+##### `path.isMustNot()`
+
+Is the current node a `mustNot` node?
+
+##### `path.isNested()`
+
+Is the current node a `nested` node?
+
+##### `path.isQuery()`
+
+Is the current node a `query` node?
+
+##### `path.isRange()`
+
+Is the current node a `range` node?
+
+##### `path.isRegexp()`
+
+Is the current node a `regexp` node?
+
+##### `path.isShould()`
+
+Is the current node a `should` node?
+
+##### `path.isTerm()`
+
+Is the current node a `term` node?
+
+##### `path.remove()`
+
+Remove the current node from the query. This method may throw if `path.parent`
+is `null`, or if the node cannot be removed.
+
+##### `path.replaceWith(node)`
+
+Replace the current node with a new node. This method may throw if
+`path.parent` is `null`, or if the node cannot be replaced.
+
+##### `path.replaceWithMany(nodeList)`
+
+Like `path.replaceWith`, but accepts an array of nodes.
+
+##### `path.skip()`
+
+Trigger the query traversal to skip any further descendants of the current
+node.
+
+##### `path.stop()`
+
+Stop traversal entirely.
 
 ## License
 
