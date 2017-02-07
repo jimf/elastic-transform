@@ -37,7 +37,15 @@ test('examples 03. add date time zone', function (t) {
     query: {
       bool: {
         must: [
-          { term: { account: 12345 } }
+          { term: { account: 12345 } },
+          {
+            range: {
+              age: {
+                gte: 10,
+                lte: 20
+              }
+            }
+          }
         ],
         should: [
           {
