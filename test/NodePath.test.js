@@ -89,10 +89,10 @@ test('NodePath#get', function (t) {
 
   const queryPath = new NodePath(q, null)
 
-  t.equal(queryPath.get('bool'), q.query.bool, 'returns nested reference to nested query object')
-  t.equal(queryPath.get('bool.doesNotExist'), undefined, 'returns undefined when path is not found')
-  t.equal(queryPath.get('bool.must.0'), q.query.bool.must[0], 'supports returning array elements')
-  t.equal(queryPath.get(['bool', 'must', '0', 'term', 'foo.bar']), q.query.bool.must[0].term['foo.bar'],
+  t.equal(queryPath.get('query'), q.query, 'returns nested reference to nested query object')
+  t.equal(queryPath.get('doesNotExist'), undefined, 'returns undefined when path is not found')
+  t.equal(queryPath.get('query.bool.must.0'), q.query.bool.must[0], 'supports returning array elements')
+  t.equal(queryPath.get(['query', 'bool', 'must', '0', 'term', 'foo.bar']), q.query.bool.must[0].term['foo.bar'],
     'supports specifying object path as an array of keys')
 
   t.end()
@@ -145,6 +145,36 @@ test('NodePath#getField', function (t) {
   var pathWithoutField = new NodePath({ query: {} }, null)
   t.equal(pathWithoutField.getField(), null,
     'returns null for nodes that do not have a logical field')
+
+  t.end()
+})
+
+test('NodePath#getPath', function (t) {
+  var q = {
+    query: {
+      bool: {
+        must: [
+          { term: { 'foo.bar': 'value' } }
+        ],
+        should: [
+          { term: { 'baz': 'value' } }
+        ],
+        must_not: [
+          { term: { 'qux': 'value' } }
+        ]
+      }
+    }
+  }
+
+  const queryPath = new NodePath(q, null)
+
+  t.equal(queryPath.getPath('doesNotExist'), undefined, 'returns undefined when path is not found')
+  t.equal(queryPath.getPath('query').node, q.query, 'returns path as new NodePath')
+  t.equal(queryPath.getPath('query.bool').node, q.query.bool, 'returns nested reference to nested query object')
+  t.equal(queryPath.getPath('query.bool.must.0').node, q.query.bool.must[0], 'supports returning array elements')
+  t.equal(queryPath.getPath(['query', 'bool', 'must', '0']).node, q.query.bool.must[0],
+    'supports specifying object path as an array of keys')
+  t.throws(queryPath.getPath.bind(queryPath, 'query.bool.should.0.term'), 'throws for non-typed nodes')
 
   t.end()
 })

@@ -73,7 +73,7 @@ NodePath.prototype.get = function get (objectPath) {
   var keys = Array.isArray(objectPath) ? objectPath : objectPath.split('.')
   return keys.reduce(function (acc, key) {
     return acc && acc[key]
-  }, this.node[snakecase(this.type)])
+  }, this.node)
 }
 
 /**
@@ -92,6 +92,45 @@ NodePath.prototype.getField = function getField () {
     })[0]
   }
   return null
+}
+
+/**
+ * Resolves given object path as a new path, or returns undefined if the path
+ * cannot be resolved. Throws if path resolves to an illegal type.
+ *
+ * @param {string|string[]} objectPath Path within node to return
+ * @return {NodePath}
+ */
+NodePath.prototype.getPath = function getPath (objectPath) {
+  var keys = Array.isArray(objectPath) ? objectPath : objectPath.split('.')
+
+  function go (acc, node) {
+    if (!acc.length) {
+      return node
+    }
+
+    var key = acc[0]
+    var nextNode = node.node[key]
+    var tmp
+
+    if (key.match(/^\d+$/)) {
+      nextNode = node.node[snakecase(node.type)][key]
+    }
+
+    if (Array.isArray(nextNode)) {
+      tmp = {}
+      tmp[key] = nextNode
+      nextNode = tmp
+    }
+
+    if (nextNode === undefined) {
+      return
+    }
+
+    return go(acc.slice(1), new NodePath(nextNode, node))
+  }
+
+  return go(keys, this)
 }
 
 /**
