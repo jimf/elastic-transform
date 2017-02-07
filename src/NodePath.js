@@ -224,9 +224,7 @@ NodePath.prototype.replaceWithMany = function replaceWithMany (nodes) {
     throw new Error('Method not supported by this node')
   }
   var args = [container.indexOf(this.node), 1].concat(nodes)
-  console.log('before', JSON.stringify(container, true, 2), args);
   container.splice.apply(container, args)
-  console.log('after', JSON.stringify(container, true, 2), args);
   this._removed = true
   this.skip()
 }
