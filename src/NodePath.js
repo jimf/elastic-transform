@@ -134,6 +134,25 @@ NodePath.prototype.getPath = function getPath (objectPath) {
 }
 
 /**
+ * Returns sibling nodes of the current node.
+ *
+ * @param {string} sibling Key/index of sibling node to retrieve
+ * @return {NodePath|undefined}
+ */
+NodePath.prototype.getSibling = function getSibling (sibling) {
+  if (this.parent == null) { return }
+  var sibNode = this.parent.node[snakecase(this.parent.type)][sibling]
+  var tmp
+  if (sibNode === undefined) { return }
+  if (Array.isArray(sibNode)) {
+    tmp = {}
+    tmp[sibling] = sibNode
+    sibNode = tmp
+  }
+  return new NodePath(sibNode, this.parent.parent)
+}
+
+/**
  * Returns the node value.
  *
  * @return {*}

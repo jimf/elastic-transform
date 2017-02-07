@@ -179,6 +179,35 @@ test('NodePath#getPath', function (t) {
   t.end()
 })
 
+test('NodePath#getSibling', function (t) {
+  var q = {
+    query: {
+      bool: {
+        must: [
+          { term: { 'foo': 'value' } },
+          { term: { 'bar': 'value' } }
+        ],
+        should: [
+          { term: { 'baz': 'value' } }
+        ]
+      }
+    }
+  }
+
+  const queryPath = new NodePath(q, null)
+  const boolPath = new NodePath(q.query, queryPath)
+  const mustPath = new NodePath({ must: q.query.bool.must }, boolPath)
+  const shouldPath = new NodePath({ should: q.query.bool.should }, boolPath)
+  const fooTermPath = new NodePath(q.query.bool.must[0], mustPath)
+
+  t.equal(queryPath.getSibling('doesNotExist'), undefined, 'returns undefined when parent is null')
+  t.equal(boolPath.getSibling('doesNotExist'), undefined, 'returns undefined when sibling is not found')
+  t.deepEqual(mustPath.getSibling('should').node, shouldPath.node, 'returns sibling nodes of object nodes')
+  t.equal(fooTermPath.getSibling(1).node, q.query.bool.must[1], 'returns sibling nodes of array nodes')
+
+  t.end()
+})
+
 test('NodePath#getValue', function (t) {
   var validCases = [
     {
