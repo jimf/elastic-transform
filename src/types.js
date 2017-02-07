@@ -36,6 +36,10 @@ exports.isRegexp = isObjWithKey('regexp')
 exports.isShould = isObjWithKey('should')
 exports.isTerm = isObjWithKey('term')
 
+exports.isEmptySearch = function (node) {
+  return node == null || Object.keys(node).length === 0
+}
+
 exports.getType = function getType (node) {
   if (node != null) {
     for (var prop in node) {
@@ -43,6 +47,10 @@ exports.getType = function getType (node) {
         return typeMap[prop]
       }
     }
+  }
+
+  if (exports.isEmptySearch(node)) {
+    return 'emptySearch'
   }
 
   throw new Error('Unrecognized ElasticSearch query node')

@@ -64,6 +64,7 @@ function traverse (query, v) {
         traverseNode(node.must_not, path)
         break
 
+      case 'emptySearch':
       case 'exists':
       case 'geoDistance':
       case 'match':

@@ -268,3 +268,15 @@ test('traverse - when traversal is stopped', function (t) {
 
   t.end()
 })
+
+test('traverse - empty search', function (t) {
+  var visitor = {
+    visitor: {
+      emptySearch: function () {
+        t.pass('traverses empty search')
+        t.end()
+      }
+    }
+  }
+  traverse(null, visitor)
+})

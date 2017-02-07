@@ -16,8 +16,7 @@ test('types - getType', function (t) {
   t.equal(subject.getType({ regexp: {} }), 'regexp', 'identifies regexp nodes')
   t.equal(subject.getType({ should: [] }), 'should', 'identifies should nodes')
   t.equal(subject.getType({ term: { foo: 'bar' } }), 'term', 'identifies term nodes')
-  t.throws(subject.getType, 'throws given no input')
-  t.throws(subject.getType.bind({}), 'throws given unknown input')
+  t.throws(subject.getType.bind(null, { foo: 'bar' }), 'throws given unknown input')
   t.end()
 })
 
@@ -46,3 +45,13 @@ testIdentifier('isRange', 'range')
 testIdentifier('isRegexp', 'regexp')
 testIdentifier('isShould', 'should')
 testIdentifier('isTerm', 'term')
+
+test('types - empty search', function (t) {
+  t.ok(subject.getType(null) === 'emptySearch' && subject.isEmptySearch(null),
+    'considers null node as empty search')
+  t.ok(subject.getType() === 'emptySearch' && subject.isEmptySearch(),
+    'considers undefined node as empty search')
+  t.ok(subject.getType({}) === 'emptySearch' && subject.isEmptySearch({}),
+    'considers empty object as empty search')
+  t.end()
+})
