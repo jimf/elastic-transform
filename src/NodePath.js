@@ -95,6 +95,15 @@ NodePath.prototype.getField = function getField () {
 }
 
 /**
+ * Return the field/value pair of the current node.
+ *
+ * @return {*[]}
+ */
+NodePath.prototype.getPair = function getPair () {
+  return [this.getField(), this.getValue()]
+}
+
+/**
  * Resolves given object path as a new path, or returns undefined if the path
  * cannot be resolved. Throws if path resolves to an illegal type.
  *

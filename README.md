@@ -162,6 +162,12 @@ Return the "field" value of a leaf node. For example, if `path.node` pointed to
 a `term` node of `{ term: { user: "kimchy" } }`, `path.getField()` would return
 `"user"`.
 
+##### `path.getPair()`
+
+Return the "field" and "value" pair of a leaf node. For example, if `path.node`
+pointed to a `term` node of `{ term: { user: "kimchy" } }`, `path.getPair()`
+would return `["user", "kimchy"]`.
+
 ##### `path.getPath(objectPath)`
 
 Identical in functionality to `path.get`, except that the return value will be
