@@ -193,6 +193,10 @@ only be called on nodes whose parents are `must`/`should`/`mustNot` arrays.
 
 Is the current node a `bool` node?
 
+##### `path.isEmptySearch()`
+
+Is the current node an empty search?
+
 ##### `path.isExists()`
 
 Is the current node an `exists` node?
@@ -224,6 +228,13 @@ Is the current node a `mustNot` node?
 ##### `path.isNested()`
 
 Is the current node a `nested` node?
+
+##### `path.isNumericRange()`
+
+Is the current node a numeric `range` node?
+
+__NOTE:__ This method returns a best guess, based on the value of the node.
+When in doubt, refer to your ElasticSearch index.
 
 ##### `path.isQuery()`
 

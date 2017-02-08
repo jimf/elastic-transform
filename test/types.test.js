@@ -46,6 +46,45 @@ testIdentifier('isRegexp', 'regexp')
 testIdentifier('isShould', 'should')
 testIdentifier('isTerm', 'term')
 
+test('types - isNumericRange', function (t) {
+  t.ok(subject.isNumericRange({
+    range: {
+      num: {
+        gte: '-9.995',
+        gt: '-10',
+        lt: 10.5,
+        lte: '+10'
+      }
+    }
+  }), 'returns true for range queries where all properties are numeric')
+  t.notOk(subject.isNumericRange({
+    range: {
+      timestamp: {
+        gte: 'now-7d/d'
+      }
+    }
+  }), 'returns false for date range queries')
+  t.notOk(subject.isNumericRange({
+    range: {
+      timestamp: {
+        gte: '2013',
+        format: 'YYYY'
+      }
+    }
+  }), 'returns false for date range queries that appear numeric')
+  t.notOk(subject.isNumericRange({
+    range: {
+      timestamp: {
+        gte: '2013',
+        time_zone: '+00:00'
+      }
+    }
+  }), 'returns false for date range queries that appear numeric')
+  t.notOk(subject.isNumericRange({ term: { user: 'kimchy' } }),
+    'returns false for non-range nodes')
+  t.end()
+})
+
 test('types - empty search', function (t) {
   t.ok(subject.getType(null) === 'emptySearch' && subject.isEmptySearch(null),
     'considers null node as empty search')

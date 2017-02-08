@@ -4,6 +4,8 @@ function isObjWithKey (key) {
   }
 }
 
+var IS_NUMERIC = /^[+-]?\d+(\.\d+)?$/
+
 var typeMap = {
   bool: 'bool',
   exists: 'exists',
@@ -35,6 +37,15 @@ exports.isRange = isObjWithKey('range')
 exports.isRegexp = isObjWithKey('regexp')
 exports.isShould = isObjWithKey('should')
 exports.isTerm = isObjWithKey('term')
+
+exports.isNumericRange = function (node) {
+  if (!exports.isRange(node)) { return false }
+  var value = node.range[Object.keys(node.range)[0]]
+  if (value.format || value.time_zone) { return false }
+  return ['gt', 'gte', 'lt', 'lte'].every(function (op) {
+    return value[op] === undefined || IS_NUMERIC.test(String(value[op]))
+  })
+}
 
 exports.isEmptySearch = function (node) {
   return node == null || Object.keys(node).length === 0
