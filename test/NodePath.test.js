@@ -392,6 +392,25 @@ test('NodePath#insertBefore', function (t) {
   t.end()
 })
 
+test('NodePath#isRemovable', function (t) {
+  var query = {
+    query: {
+      bool: {
+        must: [{ term: { foo: 'foo' } }]
+      }
+    }
+  }
+
+  var queryPath = new NodePath(query, null)
+  var boolPath = new NodePath(query.query, queryPath)
+  var mustPath = new NodePath({ must: query.query.bool.must }, boolPath)
+  var mustTermPath = new NodePath(query.query.bool.must[0], mustPath)
+
+  t.notOk(queryPath.isRemovable(), 'returns false when node cannot be removed')
+  t.ok(mustTermPath.isRemovable(), 'returns true when node can be removed')
+  t.end()
+})
+
 test('NodePath#isX', function (t) {
   t.ok((new NodePath({ bool: {} })).isBool(), 'returns true for bool nodes')
   t.ok((new NodePath({ exists: { field: 'foo' } })).isExists(), 'returns true for exists nodes')

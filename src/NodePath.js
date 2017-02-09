@@ -206,6 +206,10 @@ NodePath.prototype.insertBefore = function insertBefore (node) {
   container.splice(container.indexOf(this.node), 0, node)
 }
 
+NodePath.prototype.isRemovable = function isRemovable () {
+  return Boolean(this.parent && this.parent.node[manipMap[this.parent.type]])
+}
+
 /**
  * Remove node from query.
  */

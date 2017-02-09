@@ -254,6 +254,10 @@ Is the current node a `range` node?
 
 Is the current node a `regexp` node?
 
+##### `path.isRemovable()`
+
+Can the current node be removed/replaced?
+
 ##### `path.isShould()`
 
 Is the current node a `should` node?
@@ -265,12 +269,14 @@ Is the current node a `term` node?
 ##### `path.remove()`
 
 Remove the current node from the query. This method may throw if `path.parent`
-is `null`, or if the node cannot be removed.
+is `null`, or if the node cannot be removed (check `path.isRemovable()`) if
+this is a concern).
 
 ##### `path.replaceWith(node)`
 
 Replace the current node with a new node. This method may throw if
-`path.parent` is `null`, or if the node cannot be replaced.
+`path.parent` is `null`, or if the node cannot be replaced (check
+`path.isRemovable()` if this is a concern).
 
 ##### `path.replaceWithMany(nodeList)`
 
