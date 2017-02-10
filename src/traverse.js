@@ -1,7 +1,7 @@
 var NodePath = require('./NodePath')
 
 function isFunction (val) {
-  return toString.call(val) === '[object Function]'
+  return Object.prototype.toString.call(val) === '[object Function]'
 }
 
 function traverse (query, v) {
