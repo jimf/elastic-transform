@@ -2,11 +2,14 @@
 
 ElasticSearch query transformations using the [visitor pattern][].
 
-_Work in progress_
+[![npm Version][npm-badge]][npm]
+[![Build Status][build-badge]][build-status]
+[![Test Coverage][coverage-badge]][coverage-result]
+[![Dependency Status][dep-badge]][dep-status]
 
 ## Installation
 
-Install using npm:
+Install using [npm][]:
 
     $ npm install elastic-transform
 
@@ -295,4 +298,12 @@ Stop traversal entirely.
 
 MIT
 
+[build-badge]: https://img.shields.io/travis/jimf/elastic-transform/master.svg
+[build-status]: https://travis-ci.org/jimf/elastic-transform
+[npm-badge]: https://img.shields.io/npm/v/elastic-transform.svg
+[npm]: https://www.npmjs.org/package/elastic-transform
+[coverage-badge]: https://img.shields.io/coveralls/jimf/elastic-transform.svg
+[coverage-result]: https://coveralls.io/r/jimf/elastic-transform
+[dep-badge]: https://img.shields.io/david/jimf/elastic-transform.svg
+[dep-status]: https://david-dm.org/jimf/elastic-transform
 [visitor pattern]: https://en.wikipedia.org/wiki/Visitor_pattern

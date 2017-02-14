@@ -1,12 +1,19 @@
 {
   "name": "elastic-transform",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "ElasticSearch query transformation",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "src/"
+  ],
   "scripts": {
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "lint": "standard",
+    "pretest": "npm run lint",
     "test": "nyc tape test",
-    "tdd": "nodemon -q -x 'npm test'"
+    "tdd": "nodemon -q -x 'npm test'",
+    "validate": "npm run lint && npm run coveralls"
   },
   "keywords": [
     "elastic",
