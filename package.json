@@ -13,7 +13,7 @@
     "pretest": "npm run lint",
     "test": "nyc tape test",
     "tdd": "nodemon -q -x 'npm test'",
-    "validate": "npm run lint && npm run coveralls"
+    "validate": "npm run test && npm run coveralls"
   },
   "keywords": [
     "elastic",
