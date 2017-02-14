@@ -22,6 +22,7 @@
   "author": "Jim Fitzpatrick",
   "license": "MIT",
   "devDependencies": {
+    "coveralls": "^2.11.16",
     "nodemon": "^1.11.0",
     "nyc": "^10.1.2",
     "standard": "^8.6.0",
